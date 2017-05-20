@@ -1,3 +1,20 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.alibaba.jstorm.ons.producer;
 
 import backtype.storm.task.OutputCollector;
@@ -21,6 +38,7 @@ public class ProducerBolt implements IRichBolt {
     private static final long serialVersionUID = 2495121976857546346L;
     
     private static final Logger LOG              = Logger.getLogger(ProducerBolt.class);
+
     protected OutputCollector      collector;
     protected ProducerConfig       producerConfig;
     protected Producer             producer;
@@ -50,16 +68,16 @@ public class ProducerBolt implements IRichBolt {
         			producerConfig.getTopic(),
         			producerConfig.getSubExpress(),
         			//Message Body
-                    //任何二进制形式的数据，ONS不做任何干预，需要Producer与Consumer协商好一致的序列化和反序列化方式
+        			//任何二进制形式的数据，ONS不做任何干预，需要Producer与Consumer协商好一致的序列化和反序列化方式
         			msgTuple.getMessage().getBody());
         	
         	// 设置代表消息的业务关键属性，请尽可能全局唯一。
-            // 以方便您在无法正常收到消息情况下，可通过ONS Console查询消息并补发。
-            // 注意：不设置也不会影响消息正常收发
+        	// 以方便您在无法正常收到消息情况下，可通过ONS Console查询消息并补发。
+        	// 注意：不设置也不会影响消息正常收发
         	if (msgTuple.getMessage().getKey() != null) {
         		msg.setKey(msgTuple.getMessage().getKey());
         	}
-            //发送消息，只要不抛异常就是成功
+        	//发送消息，只要不抛异常就是成功
         	sendResult = producer.send(msg);
         	
             LOG.info("Success send msg of " + msgTuple.getMessage().getMsgID());
